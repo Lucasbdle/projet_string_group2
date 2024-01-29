@@ -234,3 +234,170 @@ String String::operator+ (const String& rhs){
 
     return resultString;
 }
+
+//Student B (thekla) : 
+
+// constructor from a c-string
+String::String(char* strcopy){
+    size_t len = 0;
+
+    // loop until the null terminator is encountered
+    while (strcopy[len] != '\0') {
+        ++len;
+    }
+
+    if(len > MAX_LENGTH){
+        // if the string is too long, print an error message and create an empty string
+        std::cout << "Could not copy  " << strcopy << ". " << std::endl;
+        std::cout << "The length of the c-string is too long! len = " << len << " exceeds MAX_LENGTH = " << MAX_LENGTH << std::endl;
+        
+        c_str_ = new char[1];
+        c_str_[0] = '\0';
+
+        std::cout << "An empty string was constructed instead" << std::endl;
+
+    } else {
+        // allocate memory
+         c_str_ = new char[len + 1];
+        // copy into the string
+        for (size_t i = 0; i < len; ++i) {
+            c_str_[i] = strcopy[i];
+        }
+        c_str_[len] = '\0';
+        capacity_ = len + 1;
+    }
+
+}
+
+// length
+size_t String::length() const{
+    
+    size_t length = 0;
+    // loop until the null terminator is encountered
+    while (c_str_[length] != '\0') {
+        ++length;
+    }
+    return length;
+}
+
+
+// maximum length the string can reach.
+size_t String::max_size() const{
+    return MAX_LENGTH;
+}
+
+// resizes the string to a length of n characters
+void String::resize(size_t n, char c) {
+
+    if (n < this->length()) {
+        // if n is smaller than the current size, make the string shorter
+        c_str_[n] = '\0';
+        capacity_ = n+1;
+    } else if (n > this->length()) {
+        // If n is greater than the current size, expand the string
+        char* newStr = new char[n + 1];  // +1 for null terminator
+
+        // copy into the new string
+        for (size_t i = 0; i < this->length(); ++i) {
+            newStr[i] = c_str_[i];
+        }
+
+        // fill the newly added space with the specified c or null character
+        for (size_t i = this->length(); i < n; ++i) {
+            newStr[i] = c;
+        }
+
+        // string becomes new string
+        newStr[n] = '\0';
+        delete[] c_str_;
+        c_str_ = newStr;
+        capacity_ = n + 1;
+    } else if (n > MAX_LENGTH){
+        // if n is bigger than the authorized MAX_LENGTH print an error
+        std::cout << "Resizing the string was not possible! n = " << n << " exceeds MAX_LENGTH = " << MAX_LENGTH << std::endl;
+    }
+}
+// resizes the string to a length of n characters
+void String::resize(size_t n, char c) {
+
+    if (n < this->length()) {
+        // if n is smaller than the current size, make the string shorter
+        c_str_[n] = '\0';
+        capacity_ = n+1;
+    } else if (n > this->length()) {
+        // If n is greater than the current size, expand the string
+        char* newStr = new char[n + 1];  // +1 for null terminator
+
+        // copy into the new string
+        for (size_t i = 0; i < this->length(); ++i) {
+            newStr[i] = c_str_[i];
+        }
+
+        // fill the newly added space with the specified c or null character
+        for (size_t i = this->length(); i < n; ++i) {
+            newStr[i] = c;
+        }
+
+        // string becomes new string
+        newStr[n] = '\0';
+        delete[] c_str_;
+        c_str_ = newStr;
+        capacity_ = n + 1;
+    } else if (n > MAX_LENGTH){
+        // if n is bigger than the authorized MAX_LENGTH print an error
+        std::cout << "Resizing the string was not possible! n = " << n << " exceeds MAX_LENGTH = " << MAX_LENGTH << std::endl;
+    }
+}
+
+
+// the string is set to a copy of the c-string from String str
+String& String::operator= (const String& str){
+    if (this != &str) {  // check for self-assignment
+        delete[] c_str_;
+
+        size_t len = str.length();
+
+        //allocate memory
+        c_str_ = new char[len + 1]; // +1 for null terminator
+        // copy into the string
+        for (size_t i = 0; i < len; ++i) {
+            c_str_[i] = str.c_str()[i];
+        }
+        c_str_[len] = '\0';
+        capacity_ = len + 1;
+    }
+
+    return *this;
+}
+
+
+// concatenates a c-string from object str and a character c
+String String::operator+ (char c){
+    size_t len = this->length();
+
+    if(len + 1 > MAX_LENGTH){
+         // if the constructed string object would be too long, print an error message and use default constructor
+        std::cout << "Could not concatenate " << c_str_ << " with " << c << std::endl;
+        std::cout << "The length  is too long! Together they have length " << len + 1 << ". That exceeds MAX_LENGTH = " << MAX_LENGTH << std::endl;
+        std::cout << "The default constructor was called instead!" << std::endl; // this was done in the clear() function
+        return String();
+    }
+
+    char* resultStr = new char[len + 2];  // +1 for null terminator
+
+    // copy characters from lhs
+    for (size_t i = 0; i < len; ++i) {
+        resultStr[i] = c_str_[i];
+    }
+
+    // add the character and the null terminator
+    resultStr[len] = c;
+    resultStr[len + 1] = '\0';
+
+    // define resultString
+    String resultString(resultStr);
+    // deallocate the memory used for resultStr
+    delete[] resultStr;
+
+    return resultString;
+}
