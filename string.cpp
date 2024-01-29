@@ -105,3 +105,132 @@ String String::operator+ (const char* rhs){
     return resultString;
 }
 
+//Student C (Martin) : 
+
+
+// destructor
+String::~String(){
+    delete[] c_str_;
+}
+
+// size of allocated storage in bytes
+size_t String::capacity() const{
+    return capacity_;
+}
+
+// is the string empty?
+bool String::empty() const {
+    return this->length() == 0;
+}
+
+// request a change in capacity
+void String::reserve(size_t n){
+    if (n > capacity_) {
+        // if n is greater than the current capacity, increase the capacity
+        char* newStr = new char[n]; 
+        // cout << "c_str_ = " << c_str_ << endl;
+        // cout << "newStr = " << newStr << endl;
+        // cout << "length = " << this->length() << endl;
+  
+        // copy into the new string
+        for (size_t i = 0; i < this->length(); ++i) {
+            //cout << "c_str_[" << i << "] = " << c_str_[i] << endl;
+            newStr[i] = c_str_[i];
+            // cout << "newStr[" << i << "] = " << newStr[i] << endl;
+        }
+        // cout << "newStr = " << newStr << endl;
+
+        // string becomes new string
+        newStr[this->length()] = '\0';
+        delete[] c_str_;
+        c_str_ = newStr;
+        // cout << "c_str_: " << c_str_ << endl;
+        capacity_ = n;
+    } else if (n < capacity_){
+        // if n is smaller than the current capacity, decrease the capacity
+        char* newStr = new char[n]; 
+
+        // copy into the new string
+        for (size_t i = 0; i < n; ++i) {
+            newStr[i] = c_str_[i];
+        }
+
+        // string becomes new string
+        newStr[n-1] = '\0';
+        delete[] c_str_;
+        c_str_ = newStr;
+        capacity_ = n;
+    } else if (n > MAX_LENGTH){
+        // if n is bigger than the authorized MAX_LENGTH print an error
+        std::cout << "Resizing the string was not possible! n = " << n << " exceeds MAX_LENGTH = " << MAX_LENGTH << std::endl;
+        return;
+    }
+}
+
+// the string is set to a copy of c-string s
+String& String::operator= (const char* s){
+
+    size_t len = 0;
+
+    // loop until the null terminator is encountered
+    while (s[len] != '\0') {
+        ++len;
+    }
+
+    if(len > MAX_LENGTH){
+        // if the string is too long, print an error message and create an empty string
+        std::cout << "Could not copy  " << s << ". " << std::endl;
+        std::cout << "The length of the c-string is too long! len = " << len << " exceeds MAX_LENGTH = " << MAX_LENGTH << std::endl;
+        std::cout << "An empty string was constructed instead" << std::endl; // this will be done in the clear() function
+        clear();
+        return *this;
+
+    } else {
+        delete[] c_str_; 
+        //allocate memory
+        c_str_ = new char[len + 1]; // +1 for null terminator
+        // copy into the string
+        for (size_t i = 0; i < len; ++i) {
+            c_str_[i] = s[i];
+        }
+        c_str_[len] = '\0';
+        capacity_ = len + 1;
+    }
+
+    return *this;
+}
+
+
+// concatenates the c-strings from objects lhs and rhs
+String String::operator+ (const String& rhs){
+    size_t lhsLen = this->length();
+    size_t rhsLen = rhs.length();
+
+    if(lhsLen + rhsLen > MAX_LENGTH){
+         // if the constructed string object would be too long, print an error message and use default constructor
+        std::cout << "Could not concatenate " << c_str_ << " and " << rhs.c_str() << std::endl;
+        std::cout << "The length  is too long! Together they have length " << lhsLen + rhsLen << ". That exceeds MAX_LENGTH = " << MAX_LENGTH << std::endl;
+        std::cout << "The default constructor was called instead!" << std::endl; // this was done in the clear() function
+        return String();
+    }
+
+    char* resultStr = new char[lhsLen + rhsLen + 1];  // +1 for null terminator
+
+    // copy characters from lhs
+    for (size_t i = 0; i < lhsLen; ++i) {
+        resultStr[i] = c_str_[i];
+    }
+
+    // copy characters from rhs
+    for (size_t i = 0; i < rhsLen; ++i) {
+        resultStr[lhsLen + i] = rhs.c_str()[i];
+    }
+    resultStr[lhsLen + rhsLen] = '\0';
+
+    // define resultString
+    String resultString(resultStr);
+    // deallocate the memory used for resultStr
+    delete[] resultStr;
+
+    return resultString;
+}
