@@ -317,37 +317,6 @@ void String::resize(size_t n, char c) {
         std::cout << "Resizing the string was not possible! n = " << n << " exceeds MAX_LENGTH = " << MAX_LENGTH << std::endl;
     }
 }
-// resizes the string to a length of n characters
-void String::resize(size_t n, char c) {
-
-    if (n < this->length()) {
-        // if n is smaller than the current size, make the string shorter
-        c_str_[n] = '\0';
-        capacity_ = n+1;
-    } else if (n > this->length()) {
-        // If n is greater than the current size, expand the string
-        char* newStr = new char[n + 1];  // +1 for null terminator
-
-        // copy into the new string
-        for (size_t i = 0; i < this->length(); ++i) {
-            newStr[i] = c_str_[i];
-        }
-
-        // fill the newly added space with the specified c or null character
-        for (size_t i = this->length(); i < n; ++i) {
-            newStr[i] = c;
-        }
-
-        // string becomes new string
-        newStr[n] = '\0';
-        delete[] c_str_;
-        c_str_ = newStr;
-        capacity_ = n + 1;
-    } else if (n > MAX_LENGTH){
-        // if n is bigger than the authorized MAX_LENGTH print an error
-        std::cout << "Resizing the string was not possible! n = " << n << " exceeds MAX_LENGTH = " << MAX_LENGTH << std::endl;
-    }
-}
 
 
 // the string is set to a copy of the c-string from String str
